@@ -57,10 +57,16 @@ class Agent:
         self.degree_of_commitment = args.degree_of_commitment
         self.reaction_strategy = args.reaction_strategy
         self.board = Board(args.size, args.n_obstacle, args.n_holes, args.lifetime_range)
-        self.board_pic = self.board.board
+        self.hole_pic = self.board.holes
+        self.target = None
+        
+        assert self.reaction_strategy in ['blind', 'disappear', 'new_hole', 'nearer_hole'], 'Invalid reaction strategy'
     
     def get_action(self):
-        pass
+        
+        
+        
+        
 
 
 
