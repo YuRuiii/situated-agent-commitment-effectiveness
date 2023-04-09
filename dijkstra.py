@@ -2,11 +2,11 @@ import math
 import numpy as np
 
 class Dijkstra:
-    def __init__(self, board, obstacles, agent, hole):
+    def __init__(self, agent, hole):
         init_pos = agent.pos
         goal_pos = hole.pos
-        self.grid_size = board.size
-        self.path = self._dijkstra(grid_size, obstacles, init_pos, goal_pos)
+        self.grid_size = agent.board.size
+        self.path = self._dijkstra(self.grid_size, self.board.obstacles, init_pos, goal_pos)
         
     def _up(self, pos):
         return (pos[0]-1, pos[1])
