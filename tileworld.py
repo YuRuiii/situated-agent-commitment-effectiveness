@@ -102,8 +102,8 @@ class Grid:
     
 class Agent:
     def __init__(self, args):
-        random.seed(0)
-        np.random.seed(0)
+        random.seed(args.seed)
+        np.random.seed(args.seed)
         self.pos = (args.grid_size//2, args.grid_size//2)
         self.gamma = args.gamma
         self.planning_time = args.planning_time
