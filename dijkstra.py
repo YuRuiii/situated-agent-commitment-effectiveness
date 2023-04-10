@@ -11,7 +11,6 @@ class Dijkstra:
         self.cost = np.ones([self.grid_size, self.grid_size])
         for obstacle in self.obstacles:
             self.cost[obstacle.pos] = math.inf
-        
         self.distances = np.ones([self.grid_size, self.grid_size]) * math.inf
         self.distances[init_pos] = 0
         
