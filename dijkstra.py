@@ -55,7 +55,7 @@ class Dijkstra:
             min_pos = None
             for pos in last_pos:
                 if pos not in visited:
-                    if self.distances[pos] <= min_distance:
+                    if self.distances[pos] < min_distance:
                         min_distance = self.distances[pos]
                         min_pos = pos
             # print(cur_pos, min_distance)
@@ -93,9 +93,11 @@ class Dijkstra:
             for i in range(self.grid_size):
                 for j in range(self.grid_size):
                     if not self.visited[i][j]:
-                        if self.distances[i][j] <= min_dist:
+                        if self.distances[i][j] < min_dist:
                             min_pos = (i, j)
                             min_dist = self.distances[i][j]
+            if not min_pos:
+                return None
             cur_pos = min_pos
             # cur_pos = np.unravel_index(distances.argmin(), distances.shape)
             # print(init_pos, cur_pos, goal_pos)

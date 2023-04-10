@@ -114,6 +114,9 @@ class Agent:
             # 2. find the optimal path to the target, move `boldness` steps
             if self.target:
                 path = Dijkstra(self.grid, self.pos, self.target.pos).path
+                if not path:
+                    self.target = None
+                    continue
                 # print(path)
                 # assert 0
                 for i in range(min(self.boldness, len(path)-1)):
