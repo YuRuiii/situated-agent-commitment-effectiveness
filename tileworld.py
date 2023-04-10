@@ -1,3 +1,4 @@
+import math
 import random
 import numpy as np
 from enum import Enum
@@ -107,8 +108,7 @@ class Agent:
         while iter_num <= self.max_iter:
             # 1. if target is not set, randomly choose a hole
             # print(not self.target, not self.hole_pic)
-            if not self.target and self.hole_pic:
-                self.target = random.choice(self.hole_pic)
+            self.target = self._utility_func() if not self.target else self.target
             # print(iter_num, self.pos, self.target.pos if self.target else None)
             
             # 2. find the optimal path to the target, move `boldness` steps
@@ -131,6 +131,57 @@ class Agent:
                 self.grid.update()
                 iter_num += 1        
         print(self.score)
+        
+    def _utility_func(self, dist_weight=1, age_weight=1):
+        """Utility function for plan selection, i.e., which target to choose
+
+        Args:
+            dist_weight (int, optional): Weight of distance score. Defaults to 1.
+            age_weight (int, optional): Age of distance score. Defaults to 1.
+
+        Returns:
+            max_target (Hole): The target with the highest score in all alive holes
+        """
+        if not self.grid.alive_holes:
+            return None
+        
+        max_score = -math.inf
+        max_target = None
+        for hole in self.grid.alive_holes:
+            dist_score = self._calc_dist(hole)
+            age_score = self._calc_age(hole)
+            score = dist_score * dist_weight + age_score * age_weight
+            if score > max_score:
+                max_score = score
+                max_target = hole
+                
+        return max_target
+    
+    def _calc_dist(self, hole):
+        """Calculate the distance score (Manhanttan) of a hole
+        
+        Args:
+            hole (Hole): a Hole object
+        
+        Returns:
+            int: the distance score of the hole
+        """
+        return abs(self.pos[0] - hole.pos[0]) + abs(self.pos[1] - hole.pos[1])
+    
+    def _calc_age(self, hole):
+        """Calculate the age score of a hole
+
+        Args:
+            hole (_type_): _description_
+            
+        Returns:
+            int: the age score of the hole
+        """
+        return self.grid.time - hole.gestation
+                
+            
+            
+            
             
     def _step(self, pos):
         self.pos = pos
