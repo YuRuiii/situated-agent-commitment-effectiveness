@@ -43,17 +43,29 @@ class Dijkstra:
         Returns:
             list: path from the initial position to the goal position
         """
+        # print(self.cost)
+        # print(self.distances)
         path = [goal_pos]
         cur_pos = goal_pos
         visited = []
         while cur_pos != init_pos:
             visited.append(cur_pos)
             last_pos = [direction(cur_pos) for direction in [self._up, self._down, self._left, self._right] if self._is_valid(direction(cur_pos))]
-            cur_pos = [pos for pos in last_pos if self.cost[pos] == min([self.cost[pos] and pos not in visited])][0]
+            min_distance = math.inf
+            min_pos = None
+            for pos in last_pos:
+                if pos not in visited:
+                    if self.distances[pos] <= min_distance:
+                        min_distance = self.distances[pos]
+                        min_pos = pos
+            # print(cur_pos, min_distance)
+            cur_pos = min_pos
+            # cur_pos = [pos for pos in last_pos if self.cost[pos] == min([self.cost[pos] and pos not in visited])][0]
             path.append(cur_pos)
             # print(f'path {path}')
             # assert 0
-        return path
+        # print(path)
+        return list(reversed(path))
         
     def _dijkstra(self, init_pos, goal_pos):
         """Dijsktra's algorithm to find the shortest path avoiding obstacles.

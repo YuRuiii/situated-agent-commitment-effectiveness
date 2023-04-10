@@ -65,6 +65,8 @@ class Grid:
         return Hole(pos, gestation, lifetime)
     
     def _set_holes(self):
+        """Set alive and waiting holes in the grid according to the current time
+        """
         for hole in self.waiting_holes:
             if hole not in self.alive_holes and hole.gestation <= self.time <= hole.gestation + hole.lifetime:
                 self.grid[hole.pos] = HOLE
@@ -99,6 +101,8 @@ class Agent:
     def run(self):
         for hole in self.grid.waiting_holes:
             print(f'hole: {hole.pos}, {hole.gestation}, {hole.lifetime}')
+        for obstacle in self.grid.obstacles:
+            print(f'obstacle: {obstacle.pos}')
         iter_num = 0
         while iter_num <= self.max_iter:
             # 1. if target is not set, randomly choose a hole
@@ -106,15 +110,20 @@ class Agent:
             if not self.target and self.hole_pic:
                 self.target = random.choice(self.hole_pic)
             # print(iter_num, self.pos, self.target.pos if self.target else None)
+            
             # 2. find the optimal path to the target, move `boldness` steps
             if self.target:
                 path = Dijkstra(self.grid, self.pos, self.target.pos).path
                 # print(path)
+                # assert 0
                 for i in range(min(self.boldness, len(path)-1)):
                     self._step(path[i+1])
                     self.grid.update()
                     iter_num += 1
-                    # print(iter_num, self.pos, self.target.pos if self.target else None)
+                    print(iter_num, self.pos, self.target.pos if self.target else None)
+                self.target = None
+                print(self.score)
+                continue
             else:
                 self.grid.update()
                 iter_num += 1        

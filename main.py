@@ -8,7 +8,7 @@ def parse_args():
     # game info
     parse.add_argument('--grid_size', type=int, default=10, help='size of the tile world grid')
     parse.add_argument('--obstacles', type=list, default=None, help='list of obstacles position')
-    parse.add_argument('--n_obstacle', type=int, default=10, help='number of obstacles')
+    parse.add_argument('--n_obstacle', type=int, default=0, help='number of obstacles')
     parse.add_argument('--n_hole', type=int, default=10, help='number of holes')
     parse.add_argument('--gamma', type=float, default=1, help='world change rate')
     parse.add_argument('--gest_range', type=tuple, default=(60, 240), help='range of gestation of holes')
