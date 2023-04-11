@@ -1,7 +1,16 @@
 import math
+import numpy as np
 from main import parse_args, modify_args
 from tileworld import Agent
+from statistics import mean
 import matplotlib.pyplot as plt
+from matplotlib import rc
+
+seed_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+gamma_list = [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 80, 100]
+planning_time_list = [0.5, 1, 2, 4]
+boldness_list = [1, 4, 30]
+reaction_strategy_list = ['blind', 'disappear', 'new_hole', 'nearer_hole']
 
 class AgentTest:
     def __init__(self):
@@ -11,21 +20,27 @@ class AgentTest:
         """Reproduce the result of Figure 1 and Figure 2 in the paper
         """
         epsilon_list = []
-        gamma_list =  [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
         for gamma in gamma_list:
-            args = parse_args()
-            args.gamma = gamma
-            args = modify_args(args)
-            agent = Agent(args)
-            agent_score, total_score = agent.run()
-            print(f'test12, gamma = {gamma}, agent_score = {agent_score}, total_score = {total_score}, epsilon = {agent_score / total_score}')
-            epsilon_list.append(agent_score / total_score)
+            epsilon = self._gen_epsilon(task_id=12,
+                                        seed=0,
+                                        gamma=gamma,
+                                        planning_time=1,
+                                        boldness=30,
+                                        reaction_strategy='blind')
+            epsilon_list.append(epsilon)
+        np.save('res/fig12.npy', epsilon_list)
         plt.figure(1)
-        plt.plot(gamma_list, epsilon_list)
+        plt.title('Figure 1: Effect of Rate of World Change')
+        plt.xlabel(r'$\gamma$')
+        plt.ylabel(r'$\epsilon$')
+        plt.plot(gamma_list, epsilon_list, linestyle='-',  marker='o', markersize=4)
         plt.savefig('fig/fig1.png')
         
         log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
         plt.figure(2)
+        plt.title('Figure 2: Effect of Rate of World Change （log x-scale）')
+        plt.xlabel(r'$\log_{10}\gamma$')
+        plt.ylabel(r'$\epsilon$')
         plt.plot(log10gamma_list, epsilon_list)
         plt.savefig('fig/fig2.png')
         
@@ -33,15 +48,14 @@ class AgentTest:
         """Reproduce the result of Figure 3 in the paper (effect of planning time, bold agent)
         """
         epsilon_lists = []
-        gamma_list =  [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
-        for planning_time in [0.5, 1, 2, 4]:
+        for planning_time in planning_time_list:
             epsilon_list = []
             for gamma in gamma_list:
                 epsilon = self._gen_epsilon(task_id=3,
                                             seed=0,
                                             gamma=gamma,
                                             planning_time=planning_time,
-                                            boldness=math.inf,
+                                            boldness=30,
                                             reaction_strategy='blind')
                 epsilon_list.append(epsilon)
             epsilon_lists.append(epsilon_list)
@@ -56,8 +70,7 @@ class AgentTest:
         """Reproduce the result of Figure 4 in the paper (effect of planning time, cautious agent)
         """
         epsilon_lists = []
-        gamma_list =  [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
-        for planning_time in [0.5, 1, 2, 4]:
+        for planning_time in planning_time_list:
             epsilon_list = []
             for gamma in gamma_list:
                 epsilon = self._gen_epsilon(task_id=4,
@@ -79,30 +92,154 @@ class AgentTest:
         """Reproduce the result of Figure 5 in the paper (effect of degree of boldness, p = 4)
         """
         epsilon_lists = []
-        gamma_list =  [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
-        for planning_time in [0.5, 1, 2, 4]:
+        for boldness in boldness_list:
             epsilon_list = []
             for gamma in gamma_list:
-                epsilon = self._gen_epsilon(5, 0, gamma, planning_time, math.inf, 'random')
+                epsilon = self._gen_epsilon(task_id=5,
+                                            seed=0,
+                                            gamma=gamma,
+                                            planning_time=4,
+                                            boldness=boldness,
+                                            reaction_strategy='blind')
                 epsilon_list.append(epsilon)
             epsilon_lists.append(epsilon_list)
         
         log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
-        plt.figure(4)
+        plt.figure(5)
         for epsilon_list in epsilon_lists:
             plt.plot(log10gamma_list, epsilon_list)
-        plt.savefig('fig/fig4.png')
+        plt.savefig('fig/fig5.png')
+    
+    def test6(self):
+        """Reproduce the result of Figure 6 in the paper (effect of degree of boldness, p = 2)
+        """
+        epsilon_lists = []
+        for boldness in boldness_list:
+            epsilon_list = []
+            for gamma in gamma_list:
+                epsilon = self._gen_epsilon(task_id=6,
+                                            seed=0,
+                                            gamma=gamma,
+                                            planning_time=2,
+                                            boldness=boldness,
+                                            reaction_strategy='blind')
+                epsilon_list.append(epsilon)
+            epsilon_lists.append(epsilon_list)
         
-    def _gen_epsilon(self, task_id, seed, gamma, planning_time, boldness, reaction_strategy):
-        args = parse_args()
-        args.seed = seed
-        args.gamma = gamma
-        args.planning_time = planning_time
-        args.boldness = boldness
-        args.reaction_strategy = reaction_strategy
-        agent = Agent(args)
-        agent_score, total_score = agent.run()
-        print(f'task{task_id}, gamma = {gamma}, pt = {planning_time}, bold = {boldness}, rs = {reaction_strategy}, {agent_score}/{total_score}, epsilon = {agent_score / total_score}')
+        log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
+        plt.figure(6)
+        for epsilon_list in epsilon_lists:
+            plt.plot(log10gamma_list, epsilon_list)
+        plt.savefig('fig/fig6.png')
+        
+    def test7(self):
+        """Reproduce the result of Figure 7 in the paper (effect of degree of boldness, p = 1)
+        """
+        epsilon_lists = []
+        for boldness in boldness_list:
+            epsilon_list = []
+            for gamma in gamma_list:
+                epsilon = self._gen_epsilon(task_id=7,
+                                            seed=0,
+                                            gamma=gamma,
+                                            planning_time=1,
+                                            boldness=boldness,
+                                            reaction_strategy='blind')
+                epsilon_list.append(epsilon)
+            epsilon_lists.append(epsilon_list)
+        
+        log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
+        plt.figure(7)
+        for epsilon_list in epsilon_lists:
+            plt.plot(log10gamma_list, epsilon_list)
+        plt.savefig('fig/fig7.png')
+        
+    def test8(self):
+        """Reproduce the result of Figure 8 in the paper (effect of reaction strategy, p = 2)
+        """
+        epsilon_lists = []
+        for reaction_strategy in reaction_strategy_list:
+            epsilon_list = []
+            for gamma in gamma_list:
+                epsilon = self._gen_epsilon(task_id=8,
+                                            seed=0,
+                                            gamma=gamma,
+                                            planning_time=2,
+                                            boldness=30,
+                                            reaction_strategy=reaction_strategy)
+                epsilon_list.append(epsilon)
+            epsilon_lists.append(epsilon_list)
+        
+        log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
+        plt.figure(8)
+        for epsilon_list in epsilon_lists:
+            plt.plot(log10gamma_list, epsilon_list)
+        plt.savefig('fig/fig8.png')
+        
+    def test9(self):
+        """Reproduce the result of Figure 9 in the paper (effect of reaction strategy, p = 1)
+        """
+        epsilon_lists = []
+        for reaction_strategy in reaction_strategy_list:
+            epsilon_list = []
+            for gamma in gamma_list:
+                epsilon = self._gen_epsilon(task_id=9,
+                                            seed=0,
+                                            gamma=gamma,
+                                            planning_time=1,
+                                            boldness=30,
+                                            reaction_strategy=reaction_strategy)
+                epsilon_list.append(epsilon)
+            epsilon_lists.append(epsilon_list)
+        
+        log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
+        plt.figure(9)
+        for epsilon_list in epsilon_lists:
+            plt.plot(log10gamma_list, epsilon_list)
+        plt.savefig('fig/fig9.png')
+        
+    def test10(self):
+        """Reproduce the result of Figure 10 in the paper (effect of degree of boldness, reactive agent, p = 1)
+        """
+        epsilon_lists = []
+        for boldness in boldness_list:
+            epsilon_list = []
+            for gamma in gamma_list:
+                epsilon = self._gen_epsilon(task_id=10,
+                                            seed=0,
+                                            gamma=gamma,
+                                            planning_time=1,
+                                            boldness=boldness,
+                                            reaction_strategy='disappear')
+                epsilon_list.append(epsilon)
+            epsilon_lists.append(epsilon_list)
+        
+        log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
+        plt.figure(10)
+        for epsilon_list in epsilon_lists:
+            plt.plot(log10gamma_list, epsilon_list)
+        plt.savefig('fig/fig10.png')
+        
+    
+        
+    def _gen_epsilon(self, task_id, seed, gamma, planning_time, boldness, reaction_strategy, print_res=True):
+        epsilons = []
+        for seed in seed_list:
+            args = parse_args()
+            args.seed = seed
+            args.gamma = gamma
+            args.planning_time = planning_time
+            args.boldness = boldness
+            args.reaction_strategy = reaction_strategy
+            args = modify_args(args)
+            agent = Agent(args)
+            agent_score, total_score = agent.run()
+            epsilon = agent_score / total_score
+            epsilons.append(epsilon)
+        epsilon = mean(epsilons)
+        if print_res:
+            print(f'task{task_id}, seed = {seed}, gamma = {gamma}, pt = {planning_time}, bold = {boldness}, rs = {reaction_strategy}, {agent_score}/{total_score}, epsilon = {epsilon}')
+        return epsilon
         
         
         
@@ -112,7 +249,16 @@ class AgentTest:
         
         
 if __name__ == '__main__':
+    rc('font',**{'family':'serif','serif':['Times']})
+    rc('text', usetex=True)
     test = AgentTest()
     test.test12()
-    test.test3()
-    test.test4()
+    # test.test3()
+    # test.test4()
+    # test.test5()
+    # test.test6()
+    # test.test7()
+    # test.test8()
+    # test.test9()
+    # test.test10()
+    

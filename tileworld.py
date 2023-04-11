@@ -26,6 +26,11 @@ class Grid:
         self.max_time = args.max_time
         self.obstacles = [self._set_obstacle(mode='random') for _ in range(args.n_obstacle)] if not args.obstacles else [self._set_obstacle(pos) for pos in args.obstacles]
         self.waiting_holes = self._gen_holes(args.score_range, args.gest_range, args.lt_range)
+        self.max_time = max([hole.end_time for hole in self.waiting_holes])
+        # print(args.max_time, self.max_time)
+        # for hole in self.waiting_holes:
+        #     print(f'hole: {hole.pos}, {hole.start_time}, {hole.end_time}')
+        # assert 0
         self.n_holes = len(self.waiting_holes)
         self.total_scores = sum([hole.score for hole in self.waiting_holes])
         self.alive_holes = []
@@ -115,7 +120,7 @@ class Agent:
         self.hole_pic = self.grid.alive_holes
         self.target = None
         self.score = 0
-        self.max_time = args.max_time
+        self.max_time = self.grid.max_time
         self.history = []
         
         assert self.reaction_strategy in ['blind', 'disappear', 'new_hole', 'nearer_hole'], f'Invalid reaction strategy {self.reaction_strategy}'
@@ -134,18 +139,16 @@ class Agent:
             # 2. find the optimal path to the target, move 'boldness' steps
             if self.target:
                 path = Dijkstra(self.grid, self.pos, self.target.pos).path
-                # print(iter_num, path)
                 if not path:
                     self.target = None
                     continue
-                # print(path)
-                # assert 0
                 self._step(path[0])
                 for i in range(1, min(self.boldness+1, len(path))):
                     self._step(path[i])
                     self.grid.update(self.step_time)
                     # print(iter_num, self.pos, self.target.pos if self.target else None)
-                self.target = self._reaction_strategy()
+                    if not self.target:
+                        break
                 # print(self.score)
                 continue
             else:
@@ -175,7 +178,7 @@ class Agent:
                     return True
             return False
             
-        if self.target.pos == self.pos:
+        if not self.target or self.target.pos == self.pos:
             return None
             
         if self.reaction_strategy == 'blind':
@@ -260,6 +263,7 @@ class Agent:
         #     self.score += 1
             
         self.hole_pic = self.grid.alive_holes
+        self.target = self._reaction_strategy()
         self._save_history()
         
     def _save_history(self):
