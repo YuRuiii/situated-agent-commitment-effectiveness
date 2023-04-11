@@ -347,7 +347,7 @@ if __name__ == '__main__':
     rcParams['font.sans-serif'] = ['Times']  # 指定字体
     # rc('text', usetex=True)
     test = AgentTest()
-    # test.just_plot = True
+    test.just_plot = True
     # test.test12()
     # test.test3()
     # test.test4()
