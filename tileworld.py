@@ -34,6 +34,7 @@ class Grid:
         self.n_holes = len(self.waiting_holes)
         self.total_scores = sum([hole.score for hole in self.waiting_holes])
         self.alive_holes = []
+        self.dead_holes = []
         self.time = 0
         self._set_holes()
     
@@ -86,6 +87,9 @@ class Grid:
     def _set_holes(self):
         """Set alive and waiting holes in the grid according to the current time
         """
+        for hole in self.dead_holes:
+            self.grid[hole.pos] = 0
+        self.dead_holes.clear()
         for hole in self.waiting_holes:
             if hole not in self.alive_holes and hole.start_time <= self.time <= hole.end_time:
                 self.grid[hole.pos] = HOLE
@@ -123,7 +127,7 @@ class Agent:
         self.max_time = self.grid.max_time
         self.history = []
         
-        assert self.reaction_strategy in ['blind', 'disappear', 'new_hole', 'nearer_hole'], f'Invalid reaction strategy {self.reaction_strategy}'
+        assert self.reaction_strategy in ['blind', 'disappear', 'new_holes', 'nearer_holes'], f'Invalid reaction strategy {self.reaction_strategy}'
     
     def run(self):
         # for hole in self.grid.waiting_holes:
@@ -259,6 +263,7 @@ class Agent:
         for hole in self.grid.alive_holes:
             if self.pos == hole.pos:
                 self.score += hole.score
+                self.grid.dead_holes.append(hole)
                 self.grid.alive_holes.remove(hole)
         # if self.pos in self.grid.alive_holes:
         #     self.score += 1

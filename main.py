@@ -10,7 +10,7 @@ def parse_args():
     parse.add_argument('--obstacles', type=list, default=None)#[(3,3), (3,4), (3,5), (3,6), (3,7), (11,9), (11,10), (11,11), (11,12), (11,13)], help='list of obstacles position')
     parse.add_argument('--n_obstacle', type=int, default=10, help='number of obstacles')
     parse.add_argument('--n_hole', type=int, default=20, help='number of holes')
-    parse.add_argument('--gamma', type=float, default=1, help='world change rate')
+    parse.add_argument('--gamma', type=float, default=100, help='world change rate')
     parse.add_argument('--score_range', type=tuple, default=(1, 5), help='range of score of holes')
     parse.add_argument('--gest_range', type=tuple, default=(60, 240), help='range of gestation of holes')
     parse.add_argument('--lt_range', type=tuple, default=(240, 960), help='range of lifetime of holes')

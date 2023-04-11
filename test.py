@@ -12,7 +12,7 @@ seed_list = range(10)
 gamma_list = [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 80, 100]
 planning_time_list = [0.5, 1, 2, 4]
 boldness_list = [1, 4, 30]
-reaction_strategy_list = ['blind', 'disappear', 'new_hole', 'nearer_hole']
+reaction_strategy_list = ['blind', 'disappear', 'new_holes', 'nearer_holes']
 
 RED = '#B22C33'
 YELLOW = '#E67125'
