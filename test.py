@@ -332,13 +332,7 @@ class AgentTest:
         epsilon = mean(epsilons)
         if print_res:
             print(f'task{task_id}, seed = {seed}, gamma = {gamma}, pt = {planning_time}, bold = {boldness}, rs = {reaction_strategy}, {agent_score}/{total_score}, epsilon = {epsilon}')
-        return epsilon
-        
-        
-        
-
-            
-        
+        return epsilon 
         
         
 if __name__ == '__main__':
@@ -355,6 +349,6 @@ if __name__ == '__main__':
     # test.test6()
     # test.test7()
     # test.test8()
-    # test.test9()
-    test.test10()
+    test.test9()
+    # test.test10()
     

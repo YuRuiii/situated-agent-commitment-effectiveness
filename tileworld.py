@@ -88,6 +88,7 @@ class Grid:
     def _set_holes(self):
         """Set alive and waiting holes in the grid according to the current time
         """
+        # print(self.alive_holes)
         for hole in self.dead_holes:
             self.grid[hole.pos] = 0
         self.dead_holes.clear()
@@ -100,6 +101,8 @@ class Grid:
             if self.time > hole.end_time:
                 self.grid[hole.pos] = 0
                 self.alive_holes.remove(hole)
+        # print(self.alive_holes)
+        
     
     def update(self, step_time):
         """Update the grid of each step
@@ -139,6 +142,7 @@ class Agent:
             # 1. if target is not set, randomly choose a hole
             # print(not self.target, not self.hole_pic)
             self.target = self._utility_func() if not self.target else self.target
+            self.hole_pic = [hole for hole in self.grid.alive_holes]
             # print(iter_num, self.pos, self.target.pos if self.target else None)
             
             # 2. find the optimal path to the target, move 'boldness' steps
@@ -148,10 +152,12 @@ class Agent:
                     self.target = None
                     continue
                 self._step(path[0])
-                self.hole_pic = [hole for hole in self.grid.alive_holes]
                 for i in range(1, min(self.boldness+1, len(path))):
                     self._step(path[i])
+                    # print(self.hole_pic)
                     self.grid.update(self.step_time)
+                    # print(self.hole_pic)
+                    # print('--------------')
                     # print(iter_num, self.pos, self.target.pos if self.target else None)
                     if not self.target:
                         break
@@ -172,15 +178,16 @@ class Agent:
         def _new_hole_appear():
             """Whether any hole appears
             """
-            print(self.grid.time)
-            for hole in self.grid.alive_holes:
-                print(hole.pos, end=' ')
-            print('')
-            for hole in self.hole_pic:
-                print(hole.pos, end=' ')
-            print('----------------')
+            # print(self.grid.time)
+            # for hole in self.grid.alive_holes:
+            #     print(hole.pos, end=' ')
+            # print('')
+            # for hole in self.hole_pic:
+            #     print(hole.pos, end=' ')
+            # print('----------------')
             if self.grid.alive_holes != self.hole_pic:
-                print(len(self.grid.alive_holes), len(self.hole_pic))
+                # print(len(self.grid.alive_holes), len(self.hole_pic))
+                # assert 0
                 return True
             return False
         
@@ -282,7 +289,7 @@ class Agent:
         # if self.pos in self.grid.alive_holes:
         #     self.score += 1
             
-        self.hole_pic = self.grid.alive_holes
+        # self.hole_pic = self.grid.alive_holes
         self.target = self._reaction_strategy()
         self._save_history()
         
