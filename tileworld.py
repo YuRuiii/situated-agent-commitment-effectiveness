@@ -154,6 +154,7 @@ class Agent:
             else:
                 self.grid.update(self.step_time)      
         # print(self.score)
+        np.save('history.npy', np.array(self.history))
         return self.score, self.grid.total_scores
     
     def _reaction_strategy(self):
@@ -189,11 +190,11 @@ class Agent:
                 return None
         
         elif self.reaction_strategy == 'new_holes':
-            if _disappear() and _new_hole_appear():
+            if _disappear() or _new_hole_appear():
                 return None
         
         elif self.reaction_strategy == 'nearer_holes':
-            if _disappear() and _nearer_hole_appear():
+            if _disappear() or _nearer_hole_appear():
                 return None
         
         return self.target

@@ -4,8 +4,9 @@ import numpy as np
 from main import parse_args, modify_args
 from tileworld import Agent
 from statistics import mean
+import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib import rc
+from matplotlib import rc, rcParams
 
 seed_list = range(10)
 gamma_list = [1, 2, 3, 4, 6, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 80, 100]
@@ -22,7 +23,7 @@ marker_list = ['o', 's', 'v', '*']
 
 class AgentTest:
     def __init__(self):
-        self.just_plot = True
+        self.just_plot = False
     
     def test12(self):
         """Reproduce the result of Figure 1 and Figure 2 in the paper (effect of world change rate)
@@ -188,7 +189,7 @@ class AgentTest:
         """Reproduce the result of Figure 7 in the paper (effect of degree of boldness, p = 1)
         """
         if self.just_plot and os.path.exists('res/fig7.npy'):
-            np.save('res/fig7.npy', epsilon_lists)
+            epsilon_lists = np.load('res/fig7.npy')
         else:
             epsilon_lists = []
             for boldness in boldness_list:
@@ -202,7 +203,7 @@ class AgentTest:
                                                 reaction_strategy='blind')
                     epsilon_list.append(epsilon)
                 epsilon_lists.append(epsilon_list)
-            np.save('res/fig7.npy', epsilon_lists)
+        np.save('res/fig7.npy', epsilon_lists)
         
         log10gamma_list = [math.log10(gamma) for gamma in gamma_list]
         plt.figure(7)
@@ -341,17 +342,19 @@ class AgentTest:
         
         
 if __name__ == '__main__':
-    rc('font',**{'family':'serif','serif':['Times']})
-    rc('text', usetex=True)
+    # rcParams.update(matplotlib.rcParamsDefault)
+    rcParams['font.family'] = 'serif'  # 字体类型
+    rcParams['font.sans-serif'] = ['Times']  # 指定字体
+    # rc('text', usetex=True)
     test = AgentTest()
-    test.just_plot = True
-    test.test12()
-    test.test3()
-    test.test4()
-    test.test5()
-    test.test6()
-    test.test7()
+    # test.just_plot = True
+    # test.test12()
+    # test.test3()
+    # test.test4()
+    # test.test5()
+    # test.test6()
+    # test.test7()
     test.test8()
     test.test9()
-    test.test10()
+    # test.test10()
     

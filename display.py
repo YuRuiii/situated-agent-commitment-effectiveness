@@ -4,7 +4,7 @@ import time
 import random
 
 class Game():
-    def __init__(self, size):
+    def __init__(self, size=15):
         # Window size
         self.window_x, self.window_y = 10*size, 10*size
         
@@ -39,7 +39,9 @@ class Game():
         pygame.display.update()
         time.sleep(0.6) # update one frame per 0.6 seconds
                 
-        
+if __name__ == '__main__':
+    g = Game()
+    g.display_all
         
     
 
