@@ -2,10 +2,12 @@
 import pygame
 import time
 import random
+import numpy as np
 
 class Game():
     def __init__(self, size=15):
         # Window size
+        self.size = size
         self.window_x, self.window_y = 10*size, 10*size
         
         # color setting
@@ -28,20 +30,20 @@ class Game():
         
     def display(self, board):
         self.game_window.fill(self.bg_color)
-        for i in range(board.size):
-            for j in range(board.size):
-                if board.board[i][j] == 1:
+        for i in range(self.size):
+            for j in range(self.size):
+                if board[i][j] == 1:
                     pygame.draw.rect(self.game_window, self.agent_color, [10*i, 10*j, 10, 10])
-                elif board.board[i][j] == 2:
+                elif board[i][j] == 2:
                     pygame.draw.rect(self.game_window, self.obstacle_color, [10*i, 10*j, 10, 10])
-                elif board.board[i][j] == 3:
+                elif board[i][j] == 3:
                     pygame.draw.rect(self.game_window, self.hole_color, [10*i, 10*j, 10, 10])
         pygame.display.update()
-        time.sleep(0.6) # update one frame per 0.6 seconds
+        time.sleep(0.06) # update one frame per 0.1 seconds
                 
 if __name__ == '__main__':
     g = Game()
-    g.display_all
+    g.display_all(np.load('history.npy'))
         
     
 
