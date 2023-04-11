@@ -1,4 +1,5 @@
 import math
+import copy
 import random
 import numpy as np
 from enum import Enum
@@ -147,6 +148,7 @@ class Agent:
                     self.target = None
                     continue
                 self._step(path[0])
+                self.hole_pic = [hole for hole in self.grid.alive_holes]
                 for i in range(1, min(self.boldness+1, len(path))):
                     self._step(path[i])
                     self.grid.update(self.step_time)
@@ -165,23 +167,32 @@ class Agent:
         def _disappear():
             """Whether the target has disappeared
             """
-            return self.target.pos not in self.grid.alive_holes
+            return self.target not in self.grid.alive_holes
         
         def _new_hole_appear():
             """Whether any hole appears
             """
+            print(self.grid.time)
             for hole in self.grid.alive_holes:
-                if hole.pos != self.target.pos:
-                    return True
+                print(hole.pos, end=' ')
+            print('')
+            for hole in self.hole_pic:
+                print(hole.pos, end=' ')
+            print('----------------')
+            if self.grid.alive_holes != self.hole_pic:
+                print(len(self.grid.alive_holes), len(self.hole_pic))
+                return True
             return False
         
         def _nearer_hole_appear():
             """Whether any nearer hole appears
             """
             for hole in self.grid.alive_holes:
-                if hole.pos != self.target.pos and self._manhanttan_dist(hole.pos) < self._manhanttan_dist(self.target.pos):
+                if self._manhanttan_dist(hole) < self._manhanttan_dist(self.target):
                     return True
             return False
+        
+        # print(_disappear(), _new_hole_appear(), _nearer_hole_appear())
             
         if not self.target or self.target.pos == self.pos:
             return None
@@ -191,20 +202,23 @@ class Agent:
         
         elif self.reaction_strategy == 'disappear':
             if _disappear():
+                # print(1)
                 return None
         
         elif self.reaction_strategy == 'new_holes':
             if _disappear() or _new_hole_appear():
+                # print(self.grid.time, 2, _disappear(), _new_hole_appear())
                 return None
         
         elif self.reaction_strategy == 'nearer_holes':
             if _disappear() or _nearer_hole_appear():
+                # print(3)
                 return None
         
         return self.target
     
         
-    def _utility_func(self, dist_weight=1, age_weight=100):
+    def _utility_func(self, dist_weight=-10, age_weight=1):
         """Utility function for plan selection, i.e., which target to choose
 
         Args:

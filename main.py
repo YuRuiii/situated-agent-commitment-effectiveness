@@ -14,7 +14,7 @@ def parse_args():
     parse.add_argument('--score_range', type=tuple, default=(1, 5), help='range of score of holes')
     parse.add_argument('--gest_range', type=tuple, default=(60, 240), help='range of gestation of holes')
     parse.add_argument('--lt_range', type=tuple, default=(240, 960), help='range of lifetime of holes')
-    parse.add_argument('--boldness', type=float, default=math.inf, help='boldness of agent')
+    parse.add_argument('--boldness', type=float, default=30, help='boldness of agent')
     parse.add_argument('--planning_time', type=float, default=1, help='agent planning time')
     parse.add_argument('--unit_time', type=float, default=1, help='time to move one step for the agent')
     parse.add_argument('--reaction_strategy', type=str, default='blind', help='reaction strategy')

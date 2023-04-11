@@ -317,7 +317,7 @@ class AgentTest:
         
     def _gen_epsilon(self, task_id, seed, gamma, planning_time, boldness, reaction_strategy, print_res=True):
         epsilons = []
-        for seed in seed_list[:1]:
+        for seed in seed_list:
             args = parse_args()
             args.seed = seed
             args.gamma = gamma
@@ -347,14 +347,14 @@ if __name__ == '__main__':
     rcParams['font.sans-serif'] = ['Times']  # 指定字体
     # rc('text', usetex=True)
     test = AgentTest()
-    test.just_plot = True
+    # test.just_plot = True
     # test.test12()
     # test.test3()
     # test.test4()
     # test.test5()
     # test.test6()
     # test.test7()
-    test.test8()
-    test.test9()
-    # test.test10()
+    # test.test8()
+    # test.test9()
+    test.test10()
     
